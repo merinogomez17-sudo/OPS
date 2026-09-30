@@ -1,69 +1,40 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import Link from "next/link";
+import { BRAND_LOWER } from "@/lib/brand";
 
 export default function Home() {
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>
-            To get started, edit the{" "}
-            <code className={styles.code}>page.tsx</code> file.
-          </h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="landing">
+      <div className="landing-top">
+        <span className="wordmark">{BRAND_LOWER}</span>
+        <Link className="btn btn-line" href="/entrar">Entrar</Link>
+      </div>
+      <section>
+        <h1>
+          Propinas con <em>un toque</em>
+        </h1>
+        <p className="lede">
+          Recibe propinas con una tarjeta NFC. Tu cliente acerca su celular, confirma con Apple Pay o Google Pay y el
+          dinero llega a tu cuenta. Tu cliente no descarga nada.
+        </p>
+        <div className="ctas">
+          <Link className="btn btn-rosa" href="/entrar?modo=registro">Crear mi tarjeta</Link>
+          <Link className="btn btn-line" href="/entrar">Ya tengo cuenta</Link>
         </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+      <section className="how">
+        <div>
+          <h3>Tu tarjeta solo guarda un link</h3>
+          <p>Cualquier etiqueta NFC sirve. La programas una vez con tu link personal y también puedes imprimir tu QR.</p>
         </div>
-      </main>
-    </div>
+        <div>
+          <h3>Tú eliges el monto</h3>
+          <p>Cambia desde tu celular cuánto cobra tu tarjeta. El cambio aplica al instante, sin reprogramarla.</p>
+        </div>
+        <div>
+          <h3>Te avisa al momento</h3>
+          <p>Cada propina te llega con aviso y la ves en tu saldo. Retira por SPEI, Mercado Pago u OXXO.</p>
+        </div>
+      </section>
+    </main>
   );
 }

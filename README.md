@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Toque · Propinas con NFC (versión web)
 
-## Getting Started
+El cliente acerca su celular a la tarjeta NFC del trabajador, ve su nombre y el monto, y paga.
+El trabajador ve su saldo y avisos en tiempo real desde una web instalable (PWA).
 
-First, run the development server:
+## Rutas
+
+| Ruta | Quién la usa | Qué hace |
+|---|---|---|
+| `/t/[codigo]` | Cliente | Página que abre la tarjeta NFC / QR. Monto, comisión opcional, pago y calificación |
+| `/entrar` | Trabajador | Crear cuenta o entrar |
+| `/panel` | Trabajador | Saldo, monto de la tarjeta, tarjetas + QR + link para grabar en NFC, movimientos, retiros |
+| `/api/checkout` | Servidor | Crea el cobro en Stripe (solo con Stripe configurado) |
+| `/api/stripe/webhook` | Stripe | Marca la propina como pagada y suma el saldo |
+
+## Correr en local
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Se abre en `http://localhost:3000` y también en la red WiFi (`http://<IP-de-tu-PC>:3000`) para probar desde el celular.
+La IP que se graba en las tarjetas está en `NEXT_PUBLIC_SITE_URL` (`.env.local`).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Modo demo vs. cobros reales
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `app_config.demo_mode = true` (por defecto): los pagos se simulan, no se cobra nada.
+- Para cobrar con Stripe:
+  1. Llenar en `.env.local`: `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`.
+  2. Registrar el webhook `…/api/stripe/webhook` con los eventos `payment_intent.succeeded` y `payment_intent.payment_failed`.
+  3. En Stripe, registrar el dominio para Apple Pay (requiere HTTPS, p. ej. Vercel).
+  4. `update app_config set demo_mode = false;`
 
-## Learn More
+## Base de datos
 
-To learn more about Next.js, take a look at the following resources:
+Supabase, esquema en `supabase/migrations/`. Todo con RLS: cada trabajador solo ve lo suyo;
+el cliente solo accede a los datos públicos de la tarjeta vía `get_tag_public`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Pendiente (siguientes fases)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Stripe Connect: alta del trabajador (verificación INE + CLABE) para que el dinero le llegue directo.
+- Retiros reales (hoy solo se registran).
+- Notificaciones push web (hoy: aviso dentro de la app con el panel abierto).
+- App nativa (Expo) con Tap to Pay y App Clip, reutilizando este backend.
